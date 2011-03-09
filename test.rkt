@@ -26,12 +26,10 @@
 (let loop ()
   (define event (allegro:wait-for-event queue))
   (match event
-    [(allegro:c-type allegro:KeyboardEvent type source timestamp display keycode unicode modifiers repeat)
+    [(allegro:KeyboardEvent type source timestamp display keycode unicode modifiers repeat)
      (printf "Got a key ~a unicode ~a\n" keycode unicode)]
-    [(allegro:c-type allegro:TimerEvent type source timestamp count error)
+    [(allegro:TimerEvent type source timestamp count error)
      (printf "timer event at ~a\n" timestamp)]
     [else (printf "unknown event\n")])
 
-  #;
-  (printf "Got an event! ~a\n" event)
   (loop))

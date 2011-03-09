@@ -70,6 +70,39 @@
            DisplaySwithOut = 46
            DisplayOrientation = 47)))
 
+;; matches a c-struct and binds all the fields
+(define-for-syntax (event-matcher stx struct-fields name kind?)
+  (syntax-parse stx
+    [(_ fields ...)
+     (when (not (= (length struct-fields)
+                   (length (syntax->list #'(fields ...)))))
+       (error 'event-matcher  "require ~a fields but given ~a"
+              (length struct-fields) (length (syntax->list #'(fields ...)))))
+     (with-syntax ([(real-fields ...)
+                    (for/list ([field struct-fields])
+                      (string->symbol (format "~a-~a" name field)))]
+                   [kind? kind?])
+       #'(and (? kind?)
+              (app (lambda (event)
+                     (real-fields event))
+                   fields)
+              ...))]))
+
+;; defines a match-expander for a given c-struct
+;; implicitly defines a matcher with the prefix `match:' on the name given
+(define-syntax (define-event-matcher stx)
+  (syntax-parse stx
+    [(_ name fields ...)
+     (with-syntax ([string-name (symbol->string (syntax->datum #'name))]
+                   [id? (string->symbol (format "~a?" (syntax->datum #'name)))]
+                   [matcher (datum->syntax #'name (string->symbol
+                                                    (format "match:~a" (syntax->datum #'name)))
+                                           #'name)])
+       #'(define-match-expander matcher
+                                (lambda (stx)
+                                  (event-matcher stx '(fields ...)
+                                                 string-name #'id?))))]))
+
 ;; the c struct is 60 bytes. a little more probably won't hurt too much
 (define-cstruct _Event ([type EventType]
                         [source _pointer]
@@ -81,6 +114,8 @@
                         [x13 _int] [x14 _int] [x15 _int]
                         ))
 
+;; the cstructs and the matchers could be defined at once to alleviate the need
+;; to repeat the field names
 (define-cstruct _KeyboardEvent ([type EventType]
                                 [source _pointer]
                                 [timestamp _double]
@@ -89,59 +124,19 @@
                                 [unicode _int]
                                 [modifiers _uint]
                                 [repeat _bool]))
+(define-event-matcher KeyboardEvent type source timestamp display keycode
+                                    unicode modifiers repeat)
 
 (define-cstruct _TimerEvent ([type EventType]
                              [source _pointer]
                              [timestamp _double]
                              [count _int64]
                              [error _double]))
+(define-event-matcher TimerEvent type source timestamp count error)
 
-(define match:KeyboardEvent #f)
-(define match:TimerEvent #f)
 (provide (rename-out [match:KeyboardEvent KeyboardEvent]
                      [match:TimerEvent TimerEvent]))
 
-(provide c-type)
-;; redo each event as its own match expander
-(define-match-expander c-type
-                       (lambda (stx)
-                         (syntax-parse stx #:literals (match:KeyboardEvent match:TimerEvent)
-                           [(_ match:TimerEvent fields ...)
-                            (define out '(type source timestamp count error))
-                            (when (not (= (length out)
-                                          (length (syntax->list #'(fields ...)))))
-                              (error 'c-type "require ~a fields but given ~a" (length out) (length (syntax->list #'(fields ...)))))
-                            (with-syntax ([(real-fields ...)
-                                           (map (lambda (field)
-                                                  (string->symbol (format "TimerEvent-~a" field))
-                                                  #;
-                                                  (datum->syntax #'_KeyboardEvent
-                                                                 (string->symbol (format "KeyboardEvent-~a" field))
-                                                                 #'_KeyboardEvent))
-                                                out)])
-                              #'(and (? TimerEvent?)
-                                   (app (lambda (event)
-                                          (real-fields event))
-                                        fields)
-                                   ...))]
-                           [(_ match:KeyboardEvent fields ...)
-                            (define out '(type source timestamp display keycode unicode modifiers repeat))
-                            (when (not (= (length out)
-                                          (length (syntax->list #'(fields ...)))))
-                              (error 'c-type "require ~a fields but given ~a" (length out) (length (syntax->list #'(fields ...)))))
-                            (with-syntax ([(real-fields ...)
-                                           (map (lambda (field)
-                                                  (string->symbol (format "KeyboardEvent-~a" field))
-                                                  #;
-                                                  (datum->syntax #'_KeyboardEvent
-                                                                 (string->symbol (format "KeyboardEvent-~a" field))
-                                                                 #'_KeyboardEvent))
-                                                out)])
-                              #'(and (? KeyboardEvent?)
-                                   (app (lambda (event)
-                                          (real-fields event))
-                                        fields)
-                                   ...))])))
 
 (define-allegro* install-system : (_int = ALLEGRO-VERSION) (_pointer = #f) -> _bool)
 (define-allegro* init-image-addon : -> _bool)
