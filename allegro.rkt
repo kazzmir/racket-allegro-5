@@ -42,6 +42,137 @@
 (define-cstruct _EventSource ([data _int]))
 (define-cstruct _EventQueue ([data _int]))
 
+(define KeyCodes
+  (_enum '(A = 1
+           B = 2
+           C = 3
+           D = 4
+           E = 5
+           F = 6
+           G = 7
+           H = 8
+           I = 9
+           J = 10
+           K = 11
+           L = 12
+           M = 13
+           N = 14
+           O = 15
+           P = 16
+           Q = 17
+           R = 18
+           S = 19
+           T = 20
+           U = 21
+           V = 22
+           W = 23
+           X = 24
+           Y = 25
+           Z = 26
+
+           0 = 27
+           1 = 28
+           2 = 29
+           3 = 30
+           4 = 31
+           5 = 32
+           6 = 33
+           7 = 34
+           8 = 35
+           9 = 36
+
+           Pad0 = 37
+           Pad1 = 38
+           Pad2 = 39
+           Pad3 = 40
+           Pad4 = 41
+           Pad5 = 42
+           Pad6 = 43
+           Pad7 = 44
+           Pad8 = 45
+           Pad9 = 46
+
+           F1 = 47
+           F2 = 48
+           F3 = 49
+           F4 = 50
+           F5 = 51
+           F6 = 52
+           F7 = 53
+           F8 = 54
+           F9 = 55
+           F10 = 56
+           F11 = 57
+           F12 = 58
+
+           Escape = 59
+           Tilde = 60
+           Minus = 61
+           Equals = 62
+           Backspace = 63
+           Tab = 64
+           Openbrace = 65
+           Closebrace = 66
+           Enter = 67
+           Semicolon = 68
+           Quote = 69
+           Backslash = 70
+           Backslash2 = 71
+           Comma = 72
+           Fullstop = 73
+           Slash = 74
+           Space = 75
+
+           Insert = 76
+           Delete = 77
+           Home = 78
+           End = 79
+           Pgup = 80
+           Pgdn = 81
+           Left = 82
+           Right = 83
+           Up = 84
+           Down = 85
+
+           PadSlash = 86
+           PadAsterisk = 87
+           PadMinus = 88
+           PadPlus = 89
+           PadDelete = 90
+           PadEnter = 91
+           Printscreen = 92
+           Pause = 93
+
+           AbntC1 = 94
+           Yen = 95
+           Kana = 96
+           Convert = 97
+           Noconvert = 98
+           At = 99
+           Circumflex = 100
+           Colon2 = 101
+           Kanji = 102
+           PadEquals = 103
+           Backquote = 104
+           Semicolon2 = 105
+           Command = 106
+           Unknown = 107
+
+           Modifiers = 215
+           Lshift = 215
+           Rshift = 216
+           Lctrl = 217
+           Rctrl = 218
+           Alt = 219
+           Altgr = 220
+           Lwin = 221
+           Rwin = 222
+           Menu = 223
+           Scrolllock = 224
+           Numlock  = 225
+           Capslock = 226
+           Max)))
+
 (define EventType
   (_enum '(JoystickAxis = 1
            JoystickButtonDown = 2
@@ -120,7 +251,7 @@
                                 [source _pointer]
                                 [timestamp _double]
                                 [display _Display-pointer]
-                                [keycode _int]
+                                [keycode KeyCodes]
                                 [unicode _int]
                                 [modifiers _uint]
                                 [repeat _bool]))

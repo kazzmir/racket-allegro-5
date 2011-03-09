@@ -23,13 +23,18 @@
 (allegro:register-event-source queue (allegro:get-display-event-source display))
 (allegro:start-timer timer)
 
-(let loop ()
-  (define event (allegro:wait-for-event queue))
-  (match event
-    [(allegro:KeyboardEvent type source timestamp display keycode unicode modifiers repeat)
-     (printf "Got a key ~a unicode ~a\n" keycode unicode)]
-    [(allegro:TimerEvent type source timestamp count error)
-     (printf "timer event at ~a\n" timestamp)]
-    [else (printf "unknown event\n")])
-
-  (loop))
+(let/ec quit
+        (let loop ()
+          (define event (allegro:wait-for-event queue))
+          (match event
+            [(allegro:KeyboardEvent type source timestamp display keycode unicode modifiers repeat)
+             (match type
+               ['KeyChar (case keycode
+                           [(Escape)
+                            (printf "Quit!\n")
+                            (quit)])]
+               [else (void)])]
+             [(allegro:TimerEvent type source timestamp count error)
+              (printf "timer event at ~a\n" timestamp)]
+             [else (printf "unknown event\n")])
+            (loop)))
