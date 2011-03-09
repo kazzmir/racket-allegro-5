@@ -21,9 +21,8 @@
                   libraries)
            (error 'allegro-function "Could not find ~a" 'id)))]))
 
-(define-syntax define-allegro
-  (syntax-rules (:)
-    [(_ id : x ...) (define id (allegro-function id : x ...))]))
+(define-syntax-rule (define-allegro id : x ...)
+                    (define id (allegro-function id : x ...)))
 
 (define-syntax-rule (define-allegro* id rest ...)
                     (begin
@@ -37,6 +36,7 @@
 
 (define-cstruct _Display ([data _int]))
 (define-cstruct _Font ([data _int]))
+(define-cstruct _Joystick ([data _int]))
 (define-cstruct _Bitmap ([data _int]))
 (define-cstruct _Timer ([data _int]))
 (define-cstruct _EventSource ([data _int]))
@@ -134,8 +134,41 @@
                              [error _double]))
 (define-event-matcher TimerEvent type source timestamp count error)
 
+(define-cstruct _MouseEvent ([type EventType]
+                             [source _pointer]
+                             [timestamp _double]
+                             [display _Display-pointer]
+                             [x _int] [y _int] [z _int] [w _int]
+                             [dx _int] [dy _int] [dz _int] [dw _int]
+                             [button _uint]
+                             [pressure _float]))
+(define-event-matcher MouseEvent type source timestamp display x y z w 
+                                 dx dy dz dw button pressure )
+
+(define-cstruct _JoystickEvent ([type EventType]
+                                [source _pointer]
+                                [timestamp _double]
+                                [id _Joystick-pointer]
+                                [stick _int]
+                                [axis _int]
+                                [position _float]
+                                [button _int]))
+(define-event-matcher JoystickEvent type source timestamp id stick axis position button)
+
+(define-cstruct _DisplayEvent ([type EventType]
+                               [source _pointer]
+                               [timestamp _double]
+                               [x _int] [y _int]
+                               [width _int] [height _int]
+                               [orientation _int]))
+(define-event-matcher DisplayEvent type source timestamp x y width height orientation)
+
 (provide (rename-out [match:KeyboardEvent KeyboardEvent]
-                     [match:TimerEvent TimerEvent]))
+                     [match:TimerEvent TimerEvent]
+                     [match:MouseEvent MouseEvent]
+                     [match:JoystickEvent JoystickEvent]
+                     [match:DisplayEvent DisplayEvent]
+                     ))
 
 
 (define-allegro* install-system : (_int = ALLEGRO-VERSION) (_pointer = #f) -> _bool)
