@@ -2,3 +2,5 @@ Racket bindings to Allegro 5
 
 Racket: http://racket-lang.org
 Allegro5: http://allegro5.org
+
+To use, build Allegro5 and put the .so files in lib/
