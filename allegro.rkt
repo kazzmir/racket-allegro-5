@@ -301,6 +301,10 @@
                      [match:DisplayEvent DisplayEvent]
                      ))
 
+(define-cstruct _Color ([red _float]
+                        [green _float]
+                        [blue _float]
+                        [alpha _float]))
 
 (define-allegro* install-system : (_int = ALLEGRO-VERSION) (_pointer = #f) -> _bool)
 (define-allegro* init-image-addon : -> _bool)
@@ -327,3 +331,7 @@
                      [(KeyDown KeyChar KeyUp)
                       (cpointer-push-tag! event KeyboardEvent-tag)])
                    event))
+(define-allegro* flip-display : -> _void)
+(define-allegro* map-rgb-f : _float _float _float -> _Color)
+(define-allegro* clear-to-color : _Color -> _void)
+(define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float _float _float -> _void)
