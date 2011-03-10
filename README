@@ -4,3 +4,7 @@ Racket: http://racket-lang.org
 Allegro5: http://allegro5.org
 
 To use, build Allegro5 and put the .so files in lib/
+
+   (require (prefix-in allegro: "allegro.rkt"))
+
+Look at test.rkt to get an idea of how it can be used.
