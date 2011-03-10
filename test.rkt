@@ -25,24 +25,74 @@
 (allegro:register-event-source queue (allegro:get-display-event-source display))
 (allegro:start-timer timer)
 
-(define (draw sprite)
+(define-struct sprite (x y dx dy))
+
+(define (draw sprites image)
   (define white (allegro:map-rgb-f 1.0 1.0 1.0))
   (allegro:clear-to-color (allegro:map-rgb-f 0.0 0.0 0.0))
-  (allegro:draw-tinted-bitmap sprite white 100.0 100.0 0.0)
+  (for ([sprite sprites])
+    (allegro:draw-tinted-bitmap image white (+ 0.0 (sprite-x sprite))
+                                (+ 0.0 (sprite-y sprite))
+                                0.0))
   (allegro:flip-display))
 
-(let/ec quit
-        (let loop ()
-          (define event (allegro:wait-for-event queue))
-          (match event
-            [(allegro:KeyboardEvent type source timestamp display keycode unicode modifiers repeat)
-             (match type
-               ['KeyChar (case keycode
-                           [(Escape)
-                            (printf "Quit!\n")
-                            (quit)])]
-               [else (void)])]
-             [(allegro:TimerEvent type source timestamp count error)
-              (draw mysha)]
-             [else (printf "unknown event\n")])
-            (loop)))
+(define (create-sprite display fps)
+  (define width (allegro:get-display-width display))
+  (define height (allegro:get-display-height display))
+  (define x (random width))
+  (define y (random height))
+  (define angle (random 360))
+  (define dx (* 2 fps (cos (* 3.14159 (/ angle 180)))))
+  (define dy (* 2 fps (sin (* 3.14159 (/ angle 180)))))
+  (sprite x y dx dy))
+
+(define (update sprites display fps)
+  (define width (allegro:get-display-width display))
+  (define height (allegro:get-display-height display))
+  (define bitmap-size 256)
+  (define (less-than-zero x) (< x 0))
+  (define (too-large-x x) (> (+ x bitmap-size) width))
+  (define (too-large-y y) (> (+ y bitmap-size) height))
+  (define new sprite)
+  (for/list ([sprite sprites])
+    (define x (+ (/ (sprite-dx sprite) fps) (sprite-x sprite)))
+    (define dx (sprite-dx sprite))
+    (match x
+      [(? less-than-zero) (set! x (- x))
+                          (set! dx (- dx))]
+      [(? too-large-x) (set! x (+ (- x) (* 2 (- width bitmap-size))))
+                     (set! dx (- dx))]
+      [else (void)])
+
+    (define y (+ (/ (sprite-dy sprite) fps) (sprite-y sprite)))
+    (define dy (sprite-dy sprite))
+    (match y
+      [(? less-than-zero) (set! y (- y))
+                          (set! dy (- dy))]
+      [(? too-large-y) (set! y (+ (- y) (* 2 (- height bitmap-size))))
+                     (set! dy (- dy))]
+      [else (void)])
+    (new x y dx dy)))
+
+(define sprites (list (create-sprite display FPS)))
+(let loop ([redraw? #f])
+  (if (and redraw?
+           (allegro:is-event-queue-empty queue))
+    (begin
+      (draw sprites mysha)
+      (loop #f))
+    (let ()
+      (define event (allegro:wait-for-event queue))
+      (match event
+        [(allegro:KeyboardEvent type source timestamp display keycode unicode modifiers repeat)
+         (match type
+           ['KeyChar (case keycode
+                       [(Escape)
+                        (printf "Quit!\n")]
+                       [else (loop redraw?)])]
+           [else (loop redraw?)])]
+        [(allegro:TimerEvent type source timestamp count error)
+         (set! sprites (update sprites display FPS))
+         (loop #t)]
+        [else (printf "unknown event\n")
+              (loop redraw?)]))))

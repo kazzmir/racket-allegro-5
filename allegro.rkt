@@ -335,3 +335,6 @@
 (define-allegro* map-rgb-f : _float _float _float -> _Color)
 (define-allegro* clear-to-color : _Color -> _void)
 (define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float _float _float -> _void)
+(define-allegro* is-event-queue-empty : _EventQueue-pointer -> _bool)
+(define-allegro* get-display-width : _Display-pointer -> _int)
+(define-allegro* get-display-height : _Display-pointer -> _int)
