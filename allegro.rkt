@@ -201,6 +201,15 @@
            DisplaySwithOut = 46
            DisplayOrientation = 47)))
 
+;; automatically converts whatever to a float by adding 0.0
+(define-fun-syntax _float*
+  (syntax-id-rules (_float*)
+    [_float* (type: _float pre: (x => (+ 0.0 x)))]))
+
+(define-fun-syntax _double**
+  (syntax-id-rules (_double**)
+    [_double** (type: _double pre: (x => (+ 0.0 x)))]))
+
 ;; matches a c-struct and binds all the fields
 (define-for-syntax (event-matcher stx struct-fields name kind?)
   (syntax-parse stx
@@ -315,7 +324,7 @@
 (define-allegro* install-mouse : -> _bool)
 (define-allegro* load-font : _string (_int = 0) (_int = 0) -> _Font-pointer)
 (define-allegro* load-bitmap : _string -> _Bitmap-pointer)
-(define-allegro* create-timer : _double -> _Timer-pointer)
+(define-allegro* create-timer : _double** -> _Timer-pointer)
 (define-allegro* start-timer : _Timer-pointer -> _void)
 (define-allegro* create-event-queue : -> _EventQueue-pointer)
 (define-allegro* register-event-source : _EventQueue-pointer _EventSource-pointer -> _void)
@@ -334,7 +343,8 @@
 (define-allegro* flip-display : -> _void)
 (define-allegro* map-rgb-f : _float _float _float -> _Color)
 (define-allegro* clear-to-color : _Color -> _void)
-(define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float _float _float -> _void)
+(define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float* _float* _float* -> _void)
+
 (define-allegro* is-event-queue-empty : _EventQueue-pointer -> _bool)
 (define-allegro* get-display-width : _Display-pointer -> _int)
 (define-allegro* get-display-height : _Display-pointer -> _int)
