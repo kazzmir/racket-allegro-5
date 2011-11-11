@@ -9,13 +9,16 @@
 (define liballegro (ffi-lib (build-path library-path "liballegro")))
 (define image-addon (ffi-lib (build-path library-path "liballegro_image")))
 (define font-addon (ffi-lib (build-path library-path "liballegro_font")))
+(define ttf-addon (ffi-lib (build-path library-path "liballegro_ttf")))
+(define primitives-addon (ffi-lib (build-path library-path "liballegro_primitives")))
 
 (define-syntax allegro-function
   (syntax-rules (:)
     [(_ id : x ...)
      (let ()
        (define c-symbol  (format "al_~a" (regexp-replaces 'id '((#rx"-" "_")))))
-       (define libraries (list liballegro image-addon font-addon))
+       (define libraries (list liballegro image-addon font-addon primitives-addon
+                               ttf-addon))
        (or (ormap (lambda (library)
                     (get-ffi-obj c-symbol library (_fun x ...)
                                  (lambda () #f)))
@@ -32,7 +35,7 @@
 
 (define ALLEGRO-VERSION (+ (arithmetic-shift 5 24)
                            (arithmetic-shift 0 16)
-                           (arithmetic-shift 0 8)
+                           (arithmetic-shift 5 8)
                            0))
 
 (define-cstruct _Display ([data _int]))
@@ -317,7 +320,10 @@
                         [alpha _float]))
 
 (define-allegro* install-system : (_int = ALLEGRO-VERSION) (_pointer = #f) -> _bool)
+(define-allegro* uninstall-system : -> _void)
 (define-allegro* init-image-addon : -> _bool)
+(define-allegro* init-primitives-addon : -> _bool)
+(define-allegro* init-ttf-addon : -> _bool)
 (define-allegro* init-font-addon : -> _bool)
 
 (define-allegro* create-display : _int _int -> _Display-pointer)
