@@ -1,13 +1,14 @@
 #lang racket/base
 
 (require ffi/unsafe racket/match
+         racket/runtime-path
          (for-syntax racket/base
                      syntax/parse))
 
-(define library-path (build-path "lib" "liballegro"))
-(define liballegro (ffi-lib library-path))
-(define image-addon (ffi-lib (build-path "lib" "liballegro_image")))
-(define font-addon (ffi-lib (build-path "lib" "liballegro_font")))
+(define-runtime-path library-path (build-path "lib"))
+(define liballegro (ffi-lib (build-path library-path "liballegro")))
+(define image-addon (ffi-lib (build-path library-path "liballegro_image")))
+(define font-addon (ffi-lib (build-path library-path "liballegro_font")))
 
 (define-syntax allegro-function
   (syntax-rules (:)
