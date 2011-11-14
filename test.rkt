@@ -14,7 +14,7 @@
 (printf "Install mouse: ~a\n" (allegro:install-mouse))
 
 (define display (allegro:create-display width height))
-(define font (allegro:load-font (build-path "data" "fixed_font.tga")))
+(define font (allegro:load-font (build-path "data" "fixed_font.tga") 10 0))
 (define mysha (allegro:load-bitmap (build-path "data" "mysha256x256.png")))
 (define timer (allegro:create-timer (/ 1.0 FPS)))
 (define queue (allegro:create-event-queue))

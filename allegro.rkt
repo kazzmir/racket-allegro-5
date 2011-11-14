@@ -177,6 +177,11 @@
            Capslock = 226
            Max)))
 
+(define TextFlags
+  (_enum '(AlignLeft = 0
+           AlignCenter = 1
+           AlignRight = 2)))
+
 (define EventType
   (_enum '(JoystickAxis = 1
            JoystickButtonDown = 2
@@ -327,12 +332,15 @@
 (define-allegro* init-font-addon : -> _bool)
 
 (define-allegro* create-display : _int _int -> _Display-pointer)
+(define-allegro* get-current-display : -> _Display-pointer)
 (define-allegro* install-keyboard : -> _bool)
 (define-allegro* install-mouse : -> _bool)
-(define-allegro* load-font : _string (_int = 0) (_int = 0) -> _Font-pointer)
+(define-allegro* load-font : _string _int _int -> _Font-pointer)
 (define-allegro* load-bitmap : _string -> _Bitmap-pointer)
+(define-allegro* draw-text : _Font-pointer _Color _float* _float* TextFlags _string -> _void)
 (define-allegro* create-timer : _double** -> _Timer-pointer)
 (define-allegro* start-timer : _Timer-pointer -> _void)
+(define-allegro* stop-timer : _Timer-pointer -> _void)
 (define-allegro* create-event-queue : -> _EventQueue-pointer)
 (define-allegro* register-event-source : _EventQueue-pointer _EventSource-pointer -> _void)
 (define-allegro* get-timer-event-source : _Timer-pointer -> _EventSource-pointer)
@@ -348,10 +356,14 @@
                       (cpointer-push-tag! event KeyboardEvent-tag)])
                    event))
 (define-allegro* flip-display : -> _void)
-(define-allegro* map-rgb-f : _float _float _float -> _Color)
+(define-allegro* map-rgb-f : _float* _float* _float* -> _Color)
+(define-allegro* map-rgba-f : _float* _float* _float* _float* -> _Color)
 (define-allegro* clear-to-color : _Color -> _void)
 (define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float* _float* _float* -> _void)
 
 (define-allegro* is-event-queue-empty : _EventQueue-pointer -> _bool)
 (define-allegro* get-display-width : _Display-pointer -> _int)
 (define-allegro* get-display-height : _Display-pointer -> _int)
+(define-allegro* draw-filled-circle : _float* _float* _float* _Color -> _void)
+(define-allegro* draw-filled-rectangle : _float* _float* _float* _float* _Color -> _void)
+(define-allegro* draw-filled-rounded-rectangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
