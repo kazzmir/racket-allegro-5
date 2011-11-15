@@ -357,6 +357,18 @@
                    event))
 (define-allegro* flip-display : -> _void)
 (define-allegro* map-rgb-f : _float* _float* _float* -> _Color)
+(define-allegro* unmap-rgb-f : _Color (red : (_ptr o _float))
+                                      (green : (_ptr o _float))
+                                      (blue : (_ptr o _float)) -> _void ->
+                                      (values red green blue))
+
+(define-allegro* unmap-rgba-f : _Color (red : (_ptr o _float))
+                                       (green : (_ptr o _float))
+                                       (blue : (_ptr o _float))
+                                       (alpha : (_ptr o _float))
+                                       -> _void ->
+                                       (values red green blue alpha))
+
 (define-allegro* map-rgba-f : _float* _float* _float* _float* -> _Color)
 (define-allegro* clear-to-color : _Color -> _void)
 (define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float* _float* _float* -> _void)
