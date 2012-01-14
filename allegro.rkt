@@ -376,6 +376,7 @@
 (define-allegro* is-event-queue-empty : _EventQueue-pointer -> _bool)
 (define-allegro* get-display-width : _Display-pointer -> _int)
 (define-allegro* get-display-height : _Display-pointer -> _int)
+(define-allegro* draw-filled-triangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-circle : _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rectangle : _float* _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rounded-rectangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
