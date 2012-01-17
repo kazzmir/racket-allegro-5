@@ -215,6 +215,10 @@
   (syntax-id-rules (_float*)
     [_float* (type: _float pre: (x => (+ 0.0 x)))]))
 
+(define-fun-syntax _int*
+  (syntax-id-rules (_int*)
+    [_float* (type: _int pre: (x => (inexact->exact (round x))))]))
+
 (define-fun-syntax _double**
   (syntax-id-rules (_double**)
     [_double** (type: _double pre: (x => (+ 0.0 x)))]))
@@ -337,6 +341,9 @@
 (define-allegro* install-mouse : -> _bool)
 (define-allegro* load-font : _string _int _int -> _Font-pointer)
 (define-allegro* load-bitmap : _string -> _Bitmap-pointer)
+(define-allegro* draw-bitmap : _Bitmap-pointer _float* _float* _int -> _void)
+(define-allegro* destroy-bitmap : _Bitmap-pointer -> _void)
+(define-allegro* convert-mask-to-alpha : _Bitmap-pointer _Color -> _void)
 (define-allegro* draw-text : _Font-pointer _Color _float* _float* TextFlags _string -> _void)
 (define-allegro* create-timer : _double** -> _Timer-pointer)
 (define-allegro* start-timer : _Timer-pointer -> _void)
