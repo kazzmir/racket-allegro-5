@@ -39,6 +39,7 @@
                            (arithmetic-shift 5 8)
                            0))
 
+;; Opaque datastructures
 (define-cstruct _Display ([data _int]))
 (define-cstruct _Font ([data _int]))
 (define-cstruct _Joystick ([data _int]))
@@ -47,6 +48,7 @@
 (define-cstruct _Sample ([data _int]))
 (define-cstruct _EventSource ([data _int]))
 (define-cstruct _EventQueue ([data _int]))
+(define-cstruct _LockedRegion ([data _int]))
 
 (define PlayMode
   (_enum '(Once = #x100
@@ -217,6 +219,41 @@
            DisplaySwithOut = 46
            DisplayOrientation = 47)))
 
+(define PixelFormat
+  (_enum '(Any = 0
+           AnyNoAlpha
+           AnyWithAlpha
+           Any15NoAlpha
+           Any16NoAlpha
+           Any16WithAlpha
+           Any24NoAlpha
+           Any32NoAlpha
+           Any32WithAlpha
+           ARGB8888
+           RGBA8888
+           ARGB4444
+           RGB888
+           RGB565
+           RGB555
+           RGBA5551
+           ARGB1555
+           ABGR8888
+           XBGR8888
+           BGR888
+           BGR565
+           BGR555
+           RGBX8888
+           XRGB8888
+           ABGRF32
+           ABGR8888LE
+           RGBA4444
+           Luminance8)))
+
+(define LockType
+  (_enum '(ReadWrite = 0
+           ReadOnly = 1
+           WriteOnly = 2)))
+
 ;; automatically converts whatever to a float by adding 0.0
 (define-fun-syntax _float*
   (syntax-id-rules (_float*)
@@ -288,7 +325,7 @@
                                     unicode modifiers repeat)
 
 (define-cstruct _TimerEvent ([type EventType]
-                             [source _pointer]
+                             [source _Timer-pointer]
                              [timestamp _double]
                              [count _int64]
                              [error _double]))
@@ -391,6 +428,9 @@
 (define-allegro* clear-to-color : _Color -> _void)
 (define-allegro* draw-tinted-bitmap : _Bitmap-pointer _Color _float* _float* _float* -> _void)
 
+(define-allegro* lock-bitmap : _Bitmap-pointer [PixelFormat = 'Any] [LockType = 'ReadWrite] -> _LockedRegion-pointer)
+(define-allegro* unlock-bitmap : _Bitmap-pointer -> _void)
+
 (define-allegro* is-event-queue-empty : _EventQueue-pointer -> _bool)
 (define-allegro* get-display-width : _Display-pointer -> _int)
 (define-allegro* get-display-height : _Display-pointer -> _int)
@@ -398,11 +438,15 @@
 (define-allegro* draw-filled-circle : _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rectangle : _float* _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rounded-rectangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
+(define-allegro* put-pixel : _int* _int* _Color -> _void)
+(define-allegro* get-backbuffer : _Display-pointer -> _Bitmap-pointer)
 
 (define-allegro* install-audio : -> _void)
 (define-allegro* reserve-samples : _int -> _void)
 (define-allegro* load-sample : _string -> _Sample-pointer)
 (define-allegro* play-sample : _Sample-pointer [_float* = 1.0] [_float* = 0.0] [_float* = 1.0] [PlayMode = 'Once] [_pointer = #f] -> _bool)
+
+(provide (rename-out [ptr-equal? same-pointer]))
 
 (provide setup-audio)
 (define (setup-audio)
