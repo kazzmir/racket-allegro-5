@@ -8,3 +8,19 @@ To use, build Allegro5 and put the .so files in lib/
    (require (prefix-in allegro: "allegro.rkt"))
 
 Look at test.rkt to get an idea of how it can be used.
+
+Here is my lib directory so you can see how to set it up
+
+ $ ls -l lib/
+ lrwxrwxrwx 1 jon jon 52 2011-03-08 16:05 liballegro_acodec.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_acodec.so*
+ lrwxrwxrwx 1 jon jon 51 2011-03-08 16:05 liballegro_audio.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_audio.so*
+ lrwxrwxrwx 1 jon jon 51 2011-03-08 16:05 liballegro_color.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_color.so*
+ lrwxrwxrwx 1 jon jon 52 2011-03-08 16:05 liballegro_dialog.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_dialog.so*
+ lrwxrwxrwx 1 jon jon 50 2011-03-08 16:05 liballegro_font.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_font.so*
+ lrwxrwxrwx 1 jon jon 51 2011-03-08 16:05 liballegro_image.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_image.so*
+ lrwxrwxrwx 1 jon jon 50 2011-03-08 16:05 liballegro_main.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_main.so*
+ lrwxrwxrwx 1 jon jon 53 2011-03-08 16:05 liballegro_memfile.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_memfile.so*
+ lrwxrwxrwx 1 jon jon 56 2011-03-08 16:05 liballegro_primitives.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_primitives.so*
+ lrwxrwxrwx 1 jon jon 45 2011-03-08 16:05 liballegro.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro.so*
+ lrwxrwxrwx 1 jon jon 49 2011-03-08 16:05 liballegro_ttf.so -> /home/jon/svn/allegro/5.0/b/lib/liballegro_ttf.so*
+ lrwxrwxrwx 1 jon jon 41 2011-03-08 16:05 pkgconfig -> /home/jon/svn/allegro/5.0/b/lib/pkgconfig/
