@@ -11,6 +11,7 @@
 (define font-addon (ffi-lib (build-path library-path "liballegro_font")))
 (define ttf-addon (ffi-lib (build-path library-path "liballegro_ttf")))
 (define primitives-addon (ffi-lib (build-path library-path "liballegro_primitives")))
+(define acodec-addon (ffi-lib (build-path library-path "liballegro_acodec")))
 
 (define-syntax allegro-function
   (syntax-rules (:)
@@ -18,7 +19,7 @@
      (let ()
        (define c-symbol  (format "al_~a" (regexp-replaces 'id '((#rx"-" "_")))))
        (define libraries (list liballegro image-addon font-addon primitives-addon
-                               ttf-addon))
+                               ttf-addon acodec-addon))
        (or (ormap (lambda (library)
                     (get-ffi-obj c-symbol library (_fun x ...)
                                  (lambda () #f)))
@@ -43,8 +44,14 @@
 (define-cstruct _Joystick ([data _int]))
 (define-cstruct _Bitmap ([data _int]))
 (define-cstruct _Timer ([data _int]))
+(define-cstruct _Sample ([data _int]))
 (define-cstruct _EventSource ([data _int]))
 (define-cstruct _EventQueue ([data _int]))
+
+(define PlayMode
+  (_enum '(Once = #x100
+           Loop = #x101
+           Bidir = #x102)))
 
 (define KeyCodes
   (_enum '(A = 1
@@ -334,6 +341,7 @@
 (define-allegro* init-primitives-addon : -> _bool)
 (define-allegro* init-ttf-addon : -> _bool)
 (define-allegro* init-font-addon : -> _bool)
+(define-allegro* init-acodec-addon : -> _bool)
 
 (define-allegro* create-display : _int _int -> _Display-pointer)
 (define-allegro* get-current-display : -> _Display-pointer)
@@ -390,3 +398,14 @@
 (define-allegro* draw-filled-circle : _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rectangle : _float* _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rounded-rectangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
+
+(define-allegro* install-audio : -> _void)
+(define-allegro* reserve-samples : _int -> _void)
+(define-allegro* load-sample : _string -> _Sample-pointer)
+(define-allegro* play-sample : _Sample-pointer [_float* = 1.0] [_float* = 0.0] [_float* = 1.0] [PlayMode = 'Once] [_pointer = #f] -> _bool)
+
+(provide setup-audio)
+(define (setup-audio)
+  (install-audio)
+  (init-acodec-addon)
+  (reserve-samples 8))
