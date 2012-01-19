@@ -9,6 +9,14 @@ To use, build Allegro5 and put the .so files in lib/
 
 Look at test.rkt to get an idea of how it can be used.
 
+Quick build instructions for Allegro5 on any unix system
+ 
+ $ cd allegro5
+ $ mkdir b
+ $ cd b
+ $ cmake ..
+ $ make
+
 Here is my lib directory so you can see how to set it up
 
  $ ls -l lib/
