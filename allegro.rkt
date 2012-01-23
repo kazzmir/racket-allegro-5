@@ -254,6 +254,22 @@
            ReadOnly = 1
            WriteOnly = 2)))
 
+
+(define BlendOperation
+  (_enum '(Add = 0
+           SourceMinusDestination = 1
+           DestinationMinusSource = 2)))
+
+(define BlendMode
+  (_enum '(Zero = 0
+           One = 1
+           Alpha = 2
+           InverseAlpha = 3
+           SourceColor = 4
+           DestinationColor = 5
+           InverseSourceColor = 6
+           InverseDestinationColor = 7)))
+
 ;; automatically converts whatever to a float by adding 0.0
 (define-fun-syntax _float*
   (syntax-id-rules (_float*)
@@ -436,6 +452,7 @@
 (define-allegro* get-display-height : _Display-pointer -> _int)
 (define-allegro* draw-filled-triangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-circle : _float* _float* _float* _Color -> _void)
+(define-allegro* draw-circle : _float* _float* _float* _Color _float* -> _void)
 (define-allegro* draw-filled-rectangle : _float* _float* _float* _float* _Color -> _void)
 (define-allegro* draw-filled-rounded-rectangle : _float* _float* _float* _float* _float* _float* _Color -> _void)
 (define-allegro* put-pixel : _int* _int* _Color -> _void)
@@ -445,6 +462,8 @@
 (define-allegro* reserve-samples : _int -> _void)
 (define-allegro* load-sample : _string -> _Sample-pointer)
 (define-allegro* play-sample : _Sample-pointer [_float* = 1.0] [_float* = 0.0] [_float* = 1.0] [PlayMode = 'Once] [_pointer = #f] -> _bool)
+
+(define-allegro* set-blender : BlendOperation BlendMode BlendMode -> _void)
 
 (provide (rename-out [ptr-equal? same-pointer]))
 
