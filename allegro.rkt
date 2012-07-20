@@ -6,20 +6,30 @@
                      syntax/parse))
 
 (define-runtime-path library-path (build-path "lib"))
-(define liballegro (ffi-lib (build-path library-path "liballegro")))
-(define image-addon (ffi-lib (build-path library-path "liballegro_image")))
-(define font-addon (ffi-lib (build-path library-path "liballegro_font")))
-(define ttf-addon (ffi-lib (build-path library-path "liballegro_ttf")))
-(define primitives-addon (ffi-lib (build-path library-path "liballegro_primitives")))
-(define acodec-addon (ffi-lib (build-path library-path "liballegro_acodec")))
+#|
+(define-runtime-path liballegro (ffi-lib (build-path library-path "liballegro")))
+(define-runtime-path image-addon (ffi-lib (build-path library-path "liballegro_image")))
+(define-runtime-path font-addon (ffi-lib (build-path library-path "liballegro_font")))
+(define-runtime-path ttf-addon (ffi-lib (build-path library-path "liballegro_ttf")))
+(define-runtime-path primitives-addon (ffi-lib (build-path library-path "liballegro_primitives")))
+(define-runtime-path acodec-addon (ffi-lib (build-path library-path "liballegro_acodec")))
+|#
+
+(define monolith (ffi-lib (build-path library-path "liballegro-monolith")))
+
+#;
+(define libraries (list liballegro image-addon font-addon primitives-addon
+                        ttf-addon acodec-addon))
+
+(define libraries (list monolith))
+
+(printf "Setting up Allegro5\n")
 
 (define-syntax allegro-function
   (syntax-rules (:)
     [(_ id : x ...)
      (let ()
-       (define c-symbol  (format "al_~a" (regexp-replaces 'id '((#rx"-" "_")))))
-       (define libraries (list liballegro image-addon font-addon primitives-addon
-                               ttf-addon acodec-addon))
+       (define c-symbol  (format "al_~a" (regexp-replaces (symbol->string 'id) '((#rx"-" "_")))))
        (or (ormap (lambda (library)
                     (get-ffi-obj c-symbol library (_fun x ...)
                                  (lambda () #f)))
@@ -35,8 +45,8 @@
                       (provide id)))
 
 (define ALLEGRO-VERSION (+ (arithmetic-shift 5 24)
-                           (arithmetic-shift 0 16)
-                           (arithmetic-shift 5 8)
+                           (arithmetic-shift 1 16)
+                           (arithmetic-shift 1 8)
                            0))
 
 ;; Opaque datastructures
