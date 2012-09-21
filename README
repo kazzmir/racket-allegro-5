@@ -14,8 +14,11 @@ Quick build instructions for Allegro5 on any unix system
  $ cd allegro5
  $ mkdir b
  $ cd b
- $ cmake ..
+ $ cmake -DWANT_MONOLITH=yes ..
  $ make
+ ..
+ $ cd racket-allegro-5/lib
+ $ ln -s /path/to/allegro/b/lib/* .
 
 Here is my lib directory so you can see how to set it up
 
