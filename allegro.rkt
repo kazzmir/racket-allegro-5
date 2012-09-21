@@ -15,7 +15,7 @@
 (define-runtime-path acodec-addon (ffi-lib (build-path library-path "liballegro_acodec")))
 |#
 
-(define monolith (ffi-lib (build-path library-path "liballegro-monolith")))
+(define monolith (ffi-lib (build-path library-path "liballegro_monolith")))
 
 #;
 (define libraries (list liballegro image-addon font-addon primitives-addon
@@ -44,10 +44,9 @@
                       (define-allegro id rest ...)
                       (provide id)))
 
-(define ALLEGRO-VERSION (+ (arithmetic-shift 5 24)
-                           (arithmetic-shift 1 16)
-                           (arithmetic-shift 1 8)
-                           0))
+(define-allegro get-allegro-version : -> _int)
+
+(define ALLEGRO-VERSION (get-allegro-version))
 
 ;; Opaque datastructures
 (define-cstruct _Display ([data _int]))
