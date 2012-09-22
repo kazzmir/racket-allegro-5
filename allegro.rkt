@@ -1,27 +1,33 @@
 #lang racket/base
 
 (require ffi/unsafe racket/match
+         racket/set
          racket/runtime-path
          (for-syntax racket/base
                      syntax/parse))
 
-(define-runtime-path library-path (build-path "lib"))
-#|
-(define-runtime-path liballegro (ffi-lib (build-path library-path "liballegro")))
-(define-runtime-path image-addon (ffi-lib (build-path library-path "liballegro_image")))
-(define-runtime-path font-addon (ffi-lib (build-path library-path "liballegro_font")))
-(define-runtime-path ttf-addon (ffi-lib (build-path library-path "liballegro_ttf")))
-(define-runtime-path primitives-addon (ffi-lib (build-path library-path "liballegro_primitives")))
-(define-runtime-path acodec-addon (ffi-lib (build-path library-path "liballegro_acodec")))
-|#
+(define-for-syntax library-path "lib")
+(define library-path "lib")
 
-(define monolith (ffi-lib (build-path library-path "liballegro_monolith")))
+(define-runtime-path liballegro-path (build-path library-path "liballegro"))
+(define-runtime-path image-addon-path (build-path library-path "liballegro_image"))
+(define-runtime-path font-addon-path (build-path library-path "liballegro_font"))
+(define-runtime-path ttf-addon-path (build-path library-path "liballegro_ttf"))
+(define-runtime-path primitives-addon-path (build-path library-path "liballegro_primitives"))
+(define-runtime-path acodec-addon-path (build-path library-path "liballegro_acodec"))
+(define-runtime-path monolith-path (build-path library-path "liballegro_monolith"))
 
-#;
-(define libraries (list liballegro image-addon font-addon primitives-addon
-                        ttf-addon acodec-addon))
+(define (load-libraries libraries)
+  (for/fold ([all (set)])
+            ([library libraries])
+            (set-union all (set (ffi-lib library #:global? #t #:fail (lambda () #f))))))
 
-(define libraries (list monolith))
+(define libraries (filter values
+                          (set->list (load-libraries
+                                       (list liballegro-path image-addon-path font-addon-path
+                                             primitives-addon-path ttf-addon-path acodec-addon-path
+                                             monolith-path)))))
+
 
 (printf "Setting up Allegro5\n")
 
