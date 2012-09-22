@@ -22,11 +22,15 @@
             ([library libraries])
             (set-union all (set (ffi-lib library #:global? #t #:fail (lambda () #f))))))
 
-(define libraries (filter values
-                          (set->list (load-libraries
-                                       (list liballegro-path image-addon-path font-addon-path
-                                             primitives-addon-path ttf-addon-path acodec-addon-path
-                                             monolith-path)))))
+(define libraries
+  (let ()
+    ;; only load either the monolith library, or the individual libraries
+    (define monolith (filter values (set->list (load-libraries (list monolith-path)))))
+    (if (null? monolith)
+      (set->list (load-libraries
+                   (list liballegro-path image-addon-path font-addon-path
+                         primitives-addon-path ttf-addon-path acodec-addon-path)))
+      monolith)))
 
 
 (printf "Setting up Allegro5\n")
@@ -473,8 +477,8 @@
 (define-allegro* put-pixel : _int* _int* _Color -> _void)
 (define-allegro* get-backbuffer : _Display-pointer -> _Bitmap-pointer)
 
-(define-allegro* install-audio : -> _void)
-(define-allegro* reserve-samples : _int -> _void)
+(define-allegro* install-audio : -> _bool)
+(define-allegro* reserve-samples : _int -> _bool)
 (define-allegro* load-sample : _string -> _Sample-pointer)
 (define-allegro* play-sample : _Sample-pointer [_float* = 1.0] [_float* = 0.0] [_float* = 1.0] [PlayMode = 'Once] [_pointer = #f] -> _bool)
 
@@ -484,6 +488,6 @@
 
 (provide setup-audio)
 (define (setup-audio)
-  (install-audio)
-  (init-acodec-addon)
-  (reserve-samples 8))
+  (and (install-audio)
+       (init-acodec-addon)
+       (reserve-samples 8)))
