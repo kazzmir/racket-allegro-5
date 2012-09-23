@@ -17,10 +17,20 @@
 (define-runtime-path acodec-addon-path (build-path library-path "liballegro_acodec"))
 (define-runtime-path monolith-path (build-path library-path "liballegro_monolith"))
 
+(define verbose? (getenv "DEBUG"))
+
+(define (debug . what)
+  (when verbose?
+    (apply printf what)))
+
 (define (load-libraries libraries)
   (for/fold ([all (set)])
             ([library libraries])
-            (set-union all (set (ffi-lib library #:global? #t #:fail (lambda () #f))))))
+    (define ffi (ffi-lib library #:global? #t #:fail (lambda () #f)))
+    (if ffi
+      (debug "Loaded library ~a\n" library)
+      (debug "Could not load library ~a\n" library))
+    (set-union all (set ffi))))
 
 (define libraries
   (let ()
