@@ -27,11 +27,14 @@
     ;; only load either the monolith library, or the individual libraries
     (define monolith (filter values (set->list (load-libraries (list monolith-path)))))
     (if (null? monolith)
-      (set->list (load-libraries
-                   (list liballegro-path image-addon-path font-addon-path
-                         primitives-addon-path ttf-addon-path acodec-addon-path)))
+      (filter values
+              (set->list (load-libraries
+                           (list liballegro-path image-addon-path font-addon-path
+                                 primitives-addon-path ttf-addon-path acodec-addon-path))))
       monolith)))
 
+(when (null? libraries)
+  (error 'allegro "Could not find any allegro libraries. Put them in ~a" library-path))
 
 (printf "Setting up Allegro5\n")
 
