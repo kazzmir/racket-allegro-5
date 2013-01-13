@@ -490,6 +490,7 @@
 (define-allegro* put-pixel : _int* _int* _Color -> _void)
 (define-allegro* get-backbuffer : _Display-pointer -> _Bitmap-pointer)
 
+(define-allegro* run-main : _int _pointer (_fun _int _pointer -> _int) -> _int)
 (define-allegro* install-audio : -> _bool)
 (define-allegro* reserve-samples : _int -> _bool)
 (define-allegro* load-sample : _string -> _Sample-pointer)
@@ -504,3 +505,10 @@
   (and (install-audio)
        (init-acodec-addon)
        (reserve-samples 8)))
+
+(provide run)
+(define (run thunk)
+  (define (callback argc argv)
+    (thunk)
+    0)
+  (run-main 0 #f callback))

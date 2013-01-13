@@ -4,6 +4,7 @@
 
 (require (prefix-in allegro: "allegro.rkt") racket/match)
 
+(define (main)
 (define width 640)
 (define height 480)
 (define FPS 60)
@@ -97,3 +98,6 @@
          (loop #t)]
         [else (printf "unknown event\n")
               (loop redraw?)]))))
+)
+
+(allegro:run main)
