@@ -5,9 +5,20 @@ Allegro5: http://allegro5.org
 
 To use, build Allegro5 and put the .so files in lib/
 
-   (require (prefix-in allegro: "allegro.rkt"))
+== Basic Program ==
 
-Look at test.rkt to get an idea of how it can be used.
+Always run the game by passing a function to the `run' method of the allegro5 library.
+This ensures that various contexts are properly initialized.
+
+(require (prefix-in allegro: "allegro.rkt"))
+(define (my-game)
+  (define display (allegro:create-display 640 480))
+  .. rest of code here ..
+  )
+
+(allegro:run my-game)
+
+Look at test.rkt to get a better idea of how allegro5 can be used.
 
 Quick build instructions for Allegro5 on any unix system
  
